@@ -4,7 +4,7 @@ library(RPostgres)
 library(sf)
 
 #Leer shape file
-data <- sf::st_read("MANZANAS_INFO.SHP")
+data <- sf::st_read("/Manzanas_folder/MANZANAS_INFO.SHP")
 data
 
 #Datos PostgreSQL
