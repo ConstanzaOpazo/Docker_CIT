@@ -1,0 +1,43 @@
+version: "3.0"
+volumes:
+  shiny_logs:
+  postgisdata:
+services:  
+  shiny:
+    container_name: R_shiny
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    user: 'root'
+    ports:
+      - '8081:3838'
+    volumes:
+      - 'shiny_logs:/var/log/shiny-server'
+  pgadmin: #Interfaz web para controlar instancia de Postgres
+    image: dpage/pgadmin4:6.15
+    container_name: pgadmin #Nombre del contenedor
+    restart: always
+    environment:
+      LDAP_AUTO_CREATE_USER: True
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - 8080:80
+    depends_on:
+      - postgis
+  postgis:
+    image: postgis/postgis:latest
+    container_name: postgis
+    restart: always 
+    hostname: postgis
+    environment:
+      POSTGRES_DB: post_gis
+      POSTGRES_USER: "citadmin"
+      POSTGRES_PASSWORD: "test123"
+      ALLOW_IP_RANGE: 0.0.0.0/0
+      PGDATA: /var/lib/postgresql/data/pgdata\
+    ports:
+      - 5433:5432
+    volumes:
+      - 'postgisdata:/var/lib/postgresql/data/pgdata\'
